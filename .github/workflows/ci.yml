@@ -8,6 +8,60 @@ on:
   workflow_dispatch:
 
 jobs:
+  static-analysis:
+    runs-on: ubuntu-latest
+    container: fedora:latest
+    name: static-analysis
+
+    steps:
+      - name: Install dependencies
+        run: dnf install -y wireshark-devel wireshark-cli cmake gcc git clang-analyzer cppcheck pip
+
+      - uses: actions/checkout@v4
+
+      - name: Trust checkout directory
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Install flawfinder
+        run: pip install --break-system-packages flawfinder
+
+      - name: scan-build
+        run: scan-build cmake -B build-scan && scan-build --status-bugs cmake --build build-scan
+
+      - name: cppcheck
+        run: cppcheck --enable=warning,performance,portability --suppress=missingIncludeSystem --inconclusive --error-exitcode=1 --std=c11 --force src/
+
+      - name: flawfinder
+        run: flawfinder --minlevel=1 --error-level=3 --columns src/
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    container: fedora:latest
+    name: sanitizers
+
+    steps:
+      - name: Install dependencies
+        run: dnf install -y wireshark-devel wireshark-cli cmake gcc git libubsan
+
+      - uses: actions/checkout@v4
+
+      - name: Trust checkout directory
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Configure with UBSan
+        run: cmake -B build -DCMAKE_C_FLAGS="-fsanitize=undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -g"
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Install plugin
+        run: cmake --install build
+
+      - name: Test with UBSan
+        env:
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+        run: ctest --test-dir build --verbose
+
   build:
     runs-on: ubuntu-latest
 
