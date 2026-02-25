@@ -5,6 +5,7 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,9 +14,12 @@ jobs:
 
     steps:
       - name: Install dependencies
-        run: dnf install -y wireshark-devel tshark cmake gcc git
+        run: dnf install -y wireshark-devel wireshark-cli cmake gcc git rpm-build
 
       - uses: actions/checkout@v4
+
+      - name: Trust checkout directory
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Configure
         run: cmake -B build
@@ -28,3 +32,6 @@ jobs:
 
       - name: Test
         run: ctest --test-dir build --verbose
+
+      - name: Build RPM
+        run: cmake --build build --target rpm

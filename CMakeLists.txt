@@ -67,6 +67,41 @@ add_custom_target(copy_plugin
 	COMMENT "Installing plugin to: ${PERSONAL_PLUGIN_DIR}"
 )
 
+# RPM build targets
+set(RPM_RESULTS_DIR "${CMAKE_SOURCE_DIR}/fedora/results")
+find_program(RPMBUILD_BIN rpmbuild)
+if(RPMBUILD_BIN)
+	add_custom_target(srpm
+		COMMAND ${CMAKE_COMMAND} -E make_directory "${RPM_RESULTS_DIR}"
+		COMMAND git -C "${CMAKE_SOURCE_DIR}" archive
+			--prefix=wireshark-ovs-netlink-${PROJECT_VERSION}/
+			-o "${RPM_RESULTS_DIR}/wireshark-ovs-netlink-${PROJECT_VERSION}.tar.gz"
+			HEAD
+		COMMAND ${RPMBUILD_BIN}
+			-bs "${CMAKE_SOURCE_DIR}/fedora/wireshark-ovs-netlink.spec"
+			--define "_sourcedir ${RPM_RESULTS_DIR}"
+			--define "_srcrpmdir ${RPM_RESULTS_DIR}"
+		COMMENT "Building SRPM in ${RPM_RESULTS_DIR}"
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+	)
+
+	add_custom_target(rpm
+		COMMAND ${CMAKE_COMMAND} -E make_directory "${RPM_RESULTS_DIR}"
+		COMMAND git -C "${CMAKE_SOURCE_DIR}" archive
+			--prefix=wireshark-ovs-netlink-${PROJECT_VERSION}/
+			-o "${RPM_RESULTS_DIR}/wireshark-ovs-netlink-${PROJECT_VERSION}.tar.gz"
+			HEAD
+		COMMAND ${RPMBUILD_BIN}
+			-bb "${CMAKE_SOURCE_DIR}/fedora/wireshark-ovs-netlink.spec"
+			--define "_sourcedir ${RPM_RESULTS_DIR}"
+			--define "_rpmdir ${RPM_RESULTS_DIR}"
+		COMMENT "Building RPM in ${RPM_RESULTS_DIR}"
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+	)
+else()
+	message(STATUS "rpmbuild not found, rpm/srpm targets disabled")
+endif()
+
 # Tests
 enable_testing()
 find_program(TSHARK_BIN tshark)
