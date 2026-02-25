@@ -9,8 +9,7 @@
 
 #define WS_BUILD_DLL
 
-#include <wireshark.h>
-#include <wsutil/plugins.h>
+#include "compat.h"
 #include <epan/proto.h>
 
 #ifndef VERSION
@@ -44,7 +43,9 @@ extern void proto_register_netlink_ovs_ct_limit(void);
 extern void proto_reg_handoff_netlink_ovs_ct_limit(void);
 
 WS_DLL_PUBLIC void plugin_register(void);
+#ifdef OVS_HAVE_PLUGIN_DESCRIBE
 WS_DLL_PUBLIC uint32_t plugin_describe(void);
+#endif
 
 /*
  * Register each OVS family as a separate proto_plugin so Wireshark
@@ -90,8 +91,10 @@ plugin_register(void)
     proto_register_plugin(&plug_ct_limit);
 }
 
+#ifdef OVS_HAVE_PLUGIN_DESCRIBE
 uint32_t
 plugin_describe(void)
 {
     return WS_PLUGIN_DESC_DISSECTOR;
 }
+#endif

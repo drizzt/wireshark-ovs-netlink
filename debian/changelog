@@ -1,0 +1,5 @@
+wireshark-ovs-netlink (0.1.0) unstable; urgency=low
+
+  * Initial release.
+
+ -- Timothy Redaelli <tredaelli@redhat.com>  Wed, 25 Feb 2026 00:00:00 +0000

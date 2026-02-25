@@ -15,7 +15,7 @@
 #include <wireshark.h>
 
 #include <epan/packet.h>
-#include <wsutil/array.h>
+
 
 #include <epan/dissectors/packet-netlink.h>
 
@@ -475,31 +475,31 @@ static int hf_ovs_flow_nat_proto_min;
 static int hf_ovs_flow_nat_proto_max;
 
 /* Subtrees */
-static int ett_ovs_flow;
-static int ett_ovs_flow_attrs;
-static int ett_ovs_flow_key_attrs;
-static int ett_ovs_flow_action_attrs;
-static int ett_ovs_flow_tunnel_key_attrs;
-static int ett_ovs_flow_key_ethernet;
-static int ett_ovs_flow_key_ipv4;
-static int ett_ovs_flow_key_ipv6;
-static int ett_ovs_flow_key_tcp;
-static int ett_ovs_flow_key_udp;
-static int ett_ovs_flow_key_sctp;
-static int ett_ovs_flow_key_icmp;
-static int ett_ovs_flow_key_icmpv6;
-static int ett_ovs_flow_key_arp;
-static int ett_ovs_flow_key_nd;
-static int ett_ovs_flow_stats;
-static int ett_ovs_flow_action_hash;
-static int ett_ovs_flow_action_push_vlan;
-static int ett_ovs_flow_action_push_mpls;
-static int ett_ovs_flow_action_push_eth;
-static int ett_ovs_flow_userspace_attrs;
-static int ett_ovs_flow_sample_attrs;
-static int ett_ovs_flow_ct_attrs;
-static int ett_ovs_flow_nat_attrs;
-static int ett_ovs_flow_ct_tuple;
+static int ett_ovs_flow = -1;
+static int ett_ovs_flow_attrs = -1;
+static int ett_ovs_flow_key_attrs = -1;
+static int ett_ovs_flow_action_attrs = -1;
+static int ett_ovs_flow_tunnel_key_attrs = -1;
+static int ett_ovs_flow_key_ethernet = -1;
+static int ett_ovs_flow_key_ipv4 = -1;
+static int ett_ovs_flow_key_ipv6 = -1;
+static int ett_ovs_flow_key_tcp = -1;
+static int ett_ovs_flow_key_udp = -1;
+static int ett_ovs_flow_key_sctp = -1;
+static int ett_ovs_flow_key_icmp = -1;
+static int ett_ovs_flow_key_icmpv6 = -1;
+static int ett_ovs_flow_key_arp = -1;
+static int ett_ovs_flow_key_nd = -1;
+static int ett_ovs_flow_stats = -1;
+static int ett_ovs_flow_action_hash = -1;
+static int ett_ovs_flow_action_push_vlan = -1;
+static int ett_ovs_flow_action_push_mpls = -1;
+static int ett_ovs_flow_action_push_eth = -1;
+static int ett_ovs_flow_userspace_attrs = -1;
+static int ett_ovs_flow_sample_attrs = -1;
+static int ett_ovs_flow_ct_attrs = -1;
+static int ett_ovs_flow_nat_attrs = -1;
+static int ett_ovs_flow_ct_tuple = -1;
 
 /* Forward declarations */
 static int dissect_ovs_flow_action_attrs(tvbuff_t *tvb, void *data,

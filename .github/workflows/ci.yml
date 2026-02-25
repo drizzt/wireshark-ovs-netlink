@@ -18,22 +18,42 @@ jobs:
           - distro: fedora
             container: fedora:latest
             install: dnf install -y wireshark-devel wireshark-cli cmake gcc git rpm-build
-            package: cmake --build build --target rpm
+            package: cmake --build build --target srpm && cmake --build build --target rpm
 
           - distro: fedora-rawhide
             container: fedora:rawhide
             install: dnf install -y wireshark-devel wireshark-cli cmake gcc git rpm-build
-            package: cmake --build build --target rpm
+            package: cmake --build build --target srpm && cmake --build build --target rpm
 
           - distro: fedora-eln
             container: quay.io/fedora/eln:latest
             install: dnf install -y wireshark-devel wireshark-cli cmake gcc git rpm-build
-            package: cmake --build build --target rpm
+            package: cmake --build build --target srpm && cmake --build build --target rpm
+
+          - distro: debian
+            container: debian:latest
+            install: apt-get update && apt-get install -y libwireshark-dev wireshark-dev tshark cmake gcc git dpkg-dev debhelper
+            package: dpkg-buildpackage -us -uc -b
+
+          - distro: debian-sid
+            container: debian:sid
+            install: apt-get update && apt-get install -y libwireshark-dev wireshark-dev tshark cmake gcc git dpkg-dev debhelper libxxhash-dev
+            package: dpkg-buildpackage -us -uc -b
+
+          - distro: ubuntu
+            container: ubuntu:latest
+            install: apt-get update && apt-get install -y libwireshark-dev wireshark-dev tshark cmake gcc git dpkg-dev debhelper
+            package: dpkg-buildpackage -us -uc -b
+
+          - distro: ubuntu-rolling
+            container: ubuntu:rolling
+            install: apt-get update && apt-get install -y libwireshark-dev wireshark-dev tshark cmake gcc git dpkg-dev debhelper
+            package: dpkg-buildpackage -us -uc -b
 
           - distro: opensuse-tw
             container: opensuse/tumbleweed
             install: zypper --non-interactive install wireshark-devel wireshark cmake gcc git rpm-build
-            package: cmake --build build --target rpm
+            package: cmake --build build --target srpm && cmake --build build --target rpm
 
     container: ${{ matrix.container }}
     name: ${{ matrix.distro }}
@@ -56,8 +76,29 @@ jobs:
       - name: Install plugin
         run: cmake --install build
 
+      - name: Verify plugin loads
+        run: |
+          echo "=== tshark version ==="
+          tshark --version | head -1
+          echo "=== Plugin folders ==="
+          tshark -G folders 2>/dev/null | grep -i plugin || true
+          echo "=== OVS plugin ==="
+          tshark -G plugins 2>/dev/null | grep -i ovs || echo "WARNING: plugin not found"
+
       - name: Test
         run: ctest --test-dir build --verbose
 
       - name: Build package
         run: ${{ matrix.package }}
+
+      - name: Collect packages
+        run: |
+          mkdir -p packages
+          find fedora/results -name '*.rpm' -exec cp {} packages/ \; 2>/dev/null || true
+          cp ../*.deb packages/ 2>/dev/null || true
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-${{ matrix.distro }}
+          path: packages/

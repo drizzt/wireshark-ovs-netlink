@@ -15,7 +15,7 @@
 #include <wireshark.h>
 
 #include <epan/packet.h>
-#include <wsutil/array.h>
+
 
 #include <epan/dissectors/packet-netlink.h>
 
@@ -90,8 +90,8 @@ static int hf_ovs_packet_len;
 static int hf_ovs_packet_hash;
 static int hf_ovs_packet_upcall_pid;
 
-static int ett_ovs_packet;
-static int ett_ovs_packet_attrs;
+static int ett_ovs_packet = -1;
+static int ett_ovs_packet_attrs = -1;
 
 static int
 dissect_ovs_packet_attrs(tvbuff_t *tvb, void *data _U_,

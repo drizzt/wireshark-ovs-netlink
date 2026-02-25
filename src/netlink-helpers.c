@@ -33,8 +33,8 @@ static int hf_genl_version;
 static int hf_genl_reserved;
 
 /* Subtrees */
-static int ett_nla;
-static int ett_nla_type;
+static int ett_nla = -1;
+static int ett_nla_type = -1;
 
 void
 ovs_netlink_helpers_register(void)

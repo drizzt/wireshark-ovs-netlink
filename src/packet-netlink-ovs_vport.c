@@ -17,7 +17,7 @@
 #include <wireshark.h>
 
 #include <epan/packet.h>
-#include <wsutil/array.h>
+
 
 #include <epan/dissectors/packet-netlink.h>
 
@@ -160,12 +160,12 @@ static int hf_ovs_vport_upcall_stats_attr;
 static int hf_ovs_vport_upcall_success;
 static int hf_ovs_vport_upcall_fail;
 
-static int ett_ovs_vport;
-static int ett_ovs_vport_attrs;
-static int ett_ovs_vport_stats;
-static int ett_ovs_vport_tunnel_attrs;
-static int ett_ovs_vport_vxlan_ext_attrs;
-static int ett_ovs_vport_upcall_stats_attrs;
+static int ett_ovs_vport = -1;
+static int ett_ovs_vport_attrs = -1;
+static int ett_ovs_vport_stats = -1;
+static int ett_ovs_vport_tunnel_attrs = -1;
+static int ett_ovs_vport_vxlan_ext_attrs = -1;
+static int ett_ovs_vport_upcall_stats_attrs = -1;
 
 static int
 dissect_ovs_vport_vxlan_ext_attrs(tvbuff_t *tvb, void *data _U_,
@@ -254,7 +254,7 @@ dissect_ovs_vport_attrs(tvbuff_t *tvb, void *data,
             proto_tree_add_item_ret_uint(tree, hf_ovs_vport_type,
                 tvb, offset, 4, nl_data->encoding, &value);
             proto_item_append_text(tree, ": %s",
-                val_to_str(info->pinfo->pool, value,
+                ovs_val_to_str(info->pinfo->pool, value,
                     ws_ovs_vport_type_vals,
                     "Unknown (%u)"));
         }

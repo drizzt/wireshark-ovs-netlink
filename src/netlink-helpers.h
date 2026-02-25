@@ -12,7 +12,7 @@
 #ifndef __OVS_NETLINK_HELPERS_H__
 #define __OVS_NETLINK_HELPERS_H__
 
-#include <wireshark.h>
+#include "compat.h"
 #include <epan/packet.h>
 #include <epan/dissectors/packet-netlink.h>
 

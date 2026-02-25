@@ -16,7 +16,7 @@
 #include <wireshark.h>
 
 #include <epan/packet.h>
-#include <wsutil/array.h>
+
 
 #include <epan/dissectors/packet-netlink.h>
 
@@ -63,9 +63,9 @@ static int hf_ovs_ct_limit_zone_id;
 static int hf_ovs_ct_limit_limit;
 static int hf_ovs_ct_limit_count;
 
-static int ett_ovs_ct_limit;
-static int ett_ovs_ct_limit_attrs;
-static int ett_ovs_ct_limit_zone;
+static int ett_ovs_ct_limit = -1;
+static int ett_ovs_ct_limit_attrs = -1;
+static int ett_ovs_ct_limit_zone = -1;
 
 static int
 dissect_ovs_ct_limit_attrs(tvbuff_t *tvb, void *data _U_,

@@ -1,0 +1,16 @@
+Source: wireshark-ovs-netlink
+Section: net
+Priority: optional
+Maintainer: Timothy Redaelli <tredaelli@redhat.com>
+Build-Depends: debhelper-compat (= 13), cmake, libwireshark-dev, wireshark-dev, tshark
+Standards-Version: 4.6.2
+Homepage: https://github.com/drizzt/wireshark-ovs-netlink
+Rules-Requires-Root: no
+
+Package: wireshark-ovs-netlink
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Open vSwitch Netlink dissector plugin for Wireshark
+ An out-of-tree Wireshark dissector plugin that decodes all six Open vSwitch
+ generic netlink families: ovs_vport, ovs_datapath, ovs_flow, ovs_packet,
+ ovs_meter, and ovs_ct_limit.

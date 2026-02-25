@@ -15,7 +15,7 @@
 #include <wireshark.h>
 
 #include <epan/packet.h>
-#include <wsutil/array.h>
+
 
 #include <epan/dissectors/packet-netlink.h>
 
@@ -121,12 +121,12 @@ static int hf_ovs_meter_band_burst;
 static int hf_ovs_meter_band_stats_n_packets;
 static int hf_ovs_meter_band_stats_n_bytes;
 
-static int ett_ovs_meter;
-static int ett_ovs_meter_attrs;
-static int ett_ovs_meter_stats;
-static int ett_ovs_meter_bands;
-static int ett_ovs_meter_band_attrs;
-static int ett_ovs_meter_band_stats;
+static int ett_ovs_meter = -1;
+static int ett_ovs_meter_attrs = -1;
+static int ett_ovs_meter_stats = -1;
+static int ett_ovs_meter_bands = -1;
+static int ett_ovs_meter_band_attrs = -1;
+static int ett_ovs_meter_band_stats = -1;
 
 static int
 dissect_ovs_meter_band_attrs(tvbuff_t *tvb, void *data,
@@ -147,7 +147,7 @@ dissect_ovs_meter_band_attrs(tvbuff_t *tvb, void *data,
                 hf_ovs_meter_band_type, tvb, offset, 4,
                 nl_data->encoding, &value);
             proto_item_append_text(tree, ": %s",
-                val_to_str(info->pinfo->pool, value,
+                ovs_val_to_str(info->pinfo->pool, value,
                     ws_ovs_meter_band_type_vals,
                     "Unknown (%u)"));
         }

@@ -15,7 +15,7 @@
 #include <wireshark.h>
 
 #include <epan/packet.h>
-#include <wsutil/array.h>
+
 
 #include <epan/dissectors/packet-netlink.h>
 
@@ -97,11 +97,11 @@ static int hf_ovs_dp_user_features_per_cpu;
 static int hf_ovs_dp_masks_cache_size;
 static int hf_ovs_dp_ifindex;
 
-static int ett_ovs_dp;
-static int ett_ovs_dp_attrs;
-static int ett_ovs_dp_stats;
-static int ett_ovs_dp_megaflow_stats;
-static int ett_ovs_dp_user_features;
+static int ett_ovs_dp = -1;
+static int ett_ovs_dp_attrs = -1;
+static int ett_ovs_dp_stats = -1;
+static int ett_ovs_dp_megaflow_stats = -1;
+static int ett_ovs_dp_user_features = -1;
 
 static int * const ovs_dp_user_features_fields[] = {
     &hf_ovs_dp_user_features_unaligned,

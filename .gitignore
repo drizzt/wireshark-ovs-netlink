@@ -3,3 +3,6 @@ build/
 *.o
 *.d
 fedora/results/
+debian/.debhelper/
+debian/files
+debian/wireshark-ovs-netlink/

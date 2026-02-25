@@ -22,7 +22,7 @@ defined in `<linux/openvswitch.h>`.
 
 ## Requirements
 
-- Wireshark 4.6+ (built with plugin support and development headers installed)
+- Wireshark 4.2+ (built with plugin support and development headers installed)
 - CMake 3.16+
 - A C11 compiler (GCC or Clang)
 
@@ -35,7 +35,7 @@ sudo dnf install wireshark-devel cmake gcc
 On Debian/Ubuntu:
 
 ```
-sudo apt install wireshark-dev cmake gcc
+sudo apt install libwireshark-dev wireshark-dev cmake gcc
 ```
 
 ## Building
@@ -126,6 +126,7 @@ ctest --verbose
 CMakeLists.txt                         # Build system
 src/
   plugin.c                             # Plugin entry point and registration
+  compat.h                             # Wireshark version compatibility macros
   netlink-helpers.c                    # Netlink attribute parsing (reimplements
   netlink-helpers.h                    #   unexported libwireshark internals)
   packet-netlink-ovs_vport.c           # ovs_vport dissector
