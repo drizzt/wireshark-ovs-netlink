@@ -10,11 +10,37 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: fedora:latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: fedora
+            container: fedora:latest
+            install: dnf install -y wireshark-devel wireshark-cli cmake gcc git rpm-build
+            package: cmake --build build --target rpm
+
+          - distro: fedora-rawhide
+            container: fedora:rawhide
+            install: dnf install -y wireshark-devel wireshark-cli cmake gcc git rpm-build
+            package: cmake --build build --target rpm
+
+          - distro: fedora-eln
+            container: quay.io/fedora/eln:latest
+            install: dnf install -y wireshark-devel wireshark-cli cmake gcc git rpm-build
+            package: cmake --build build --target rpm
+
+          - distro: opensuse-tw
+            container: opensuse/tumbleweed
+            install: zypper --non-interactive install wireshark-devel wireshark cmake gcc git rpm-build
+            package: cmake --build build --target rpm
+
+    container: ${{ matrix.container }}
+    name: ${{ matrix.distro }}
 
     steps:
       - name: Install dependencies
-        run: dnf install -y wireshark-devel wireshark-cli cmake gcc git rpm-build
+        run: ${{ matrix.install }}
 
       - uses: actions/checkout@v4
 
@@ -33,5 +59,5 @@ jobs:
       - name: Test
         run: ctest --test-dir build --verbose
 
-      - name: Build RPM
-        run: cmake --build build --target rpm
+      - name: Build package
+        run: ${{ matrix.package }}
