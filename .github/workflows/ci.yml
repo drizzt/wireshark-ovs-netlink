@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: dnf install -y wireshark-devel wireshark-cli cmake gcc git clang-analyzer cppcheck pip
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Trust checkout directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -43,7 +43,7 @@ jobs:
       - name: Install dependencies
         run: dnf install -y wireshark-devel wireshark-cli cmake gcc git libubsan
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Trust checkout directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -116,7 +116,7 @@ jobs:
       - name: Install dependencies
         run: ${{ matrix.install }}
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Trust checkout directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"

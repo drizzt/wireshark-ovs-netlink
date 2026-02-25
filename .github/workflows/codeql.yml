@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: dnf install -y wireshark-devel wireshark-cli cmake gcc git
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Trust checkout directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
