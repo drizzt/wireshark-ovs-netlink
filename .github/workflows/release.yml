@@ -1,0 +1,141 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate tag matches project version
+        id: check
+        run: |
+          tag_version="${GITHUB_REF_NAME#v}"
+          cmake_version=$(sed -n 's/^[[:space:]]*VERSION \([0-9][0-9.]*\).*/\1/p' CMakeLists.txt)
+          echo "Tag version: $tag_version"
+          echo "CMakeLists.txt version: $cmake_version"
+          if [ "$tag_version" != "$cmake_version" ]; then
+            echo "::error::Tag version ($tag_version) does not match CMakeLists.txt version ($cmake_version)"
+            exit 1
+          fi
+          echo "version=$tag_version" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: validate
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: fedora
+            container: fedora:latest
+            install: dnf install -y wireshark-devel wireshark-cli cmake gcc git rpm-build
+            package: cmake --build build --target srpm && cmake --build build --target rpm
+
+          - distro: debian
+            container: debian:latest
+            install: apt-get update && apt-get install -y libwireshark-dev wireshark-dev tshark cmake gcc git dpkg-dev debhelper
+            package: dpkg-buildpackage -us -uc -b
+
+          - distro: ubuntu
+            container: ubuntu:latest
+            install: apt-get update && apt-get install -y libwireshark-dev wireshark-dev tshark cmake gcc git dpkg-dev debhelper
+            package: dpkg-buildpackage -us -uc -b
+
+          - distro: opensuse-tw
+            container: opensuse/tumbleweed
+            install: zypper --non-interactive install wireshark-devel wireshark cmake gcc git rpm-build
+            package: cmake --build build --target srpm && cmake --build build --target rpm
+
+    container: ${{ matrix.container }}
+    name: ${{ matrix.distro }}
+
+    steps:
+      - name: Install dependencies
+        run: ${{ matrix.install }}
+
+      - uses: actions/checkout@v4
+
+      - name: Trust checkout directory
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Configure
+        run: cmake -B build
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Install plugin
+        run: cmake --install build
+
+      - name: Verify plugin loads
+        run: |
+          echo "=== tshark version ==="
+          tshark --version | head -1
+          echo "=== Plugin folders ==="
+          tshark -G folders 2>/dev/null | grep -i plugin || true
+          echo "=== OVS plugin ==="
+          tshark -G plugins 2>/dev/null | grep -i ovs || echo "WARNING: plugin not found"
+
+      - name: Test
+        run: ctest --test-dir build --verbose
+
+      - name: Build package
+        run: ${{ matrix.package }}
+
+      - name: Collect packages
+        run: |
+          mkdir -p packages
+          find fedora/results -name '*.rpm' -exec cp {} packages/ \; 2>/dev/null || true
+          cp ../*.deb packages/ 2>/dev/null || true
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-${{ matrix.distro }}
+          path: packages/
+
+  release:
+    needs: [validate, build]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+          pattern: packages-*
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p release-assets
+          for dir in artifacts/packages-*/; do
+            distro="${dir#artifacts/packages-}"
+            distro="${distro%/}"
+            for file in "$dir"*; do
+              [ -f "$file" ] || continue
+              base=$(basename "$file")
+              ext="${base##*.}"
+              name="${base%.*}"
+              cp "$file" "release-assets/${name}.${distro}.${ext}"
+            done
+          done
+          echo "Uploading files:"
+          ls release-assets/
+          gh release create "$GITHUB_REF_NAME" \
+            --title "v${{ needs.validate.outputs.version }}" \
+            --generate-notes \
+            release-assets/*
