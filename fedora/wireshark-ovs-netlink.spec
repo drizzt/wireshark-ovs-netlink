@@ -1,6 +1,6 @@
 Name:           wireshark-ovs-netlink
 Version:        0.1.0
-Release:        %autorelease
+Release:        %{?autorelease}%{!?autorelease:1%{?dist}}
 Summary:        Open vSwitch Netlink dissector plugin for Wireshark
 License:        GPL-2.0-or-later
 URL:            https://github.com/drizzt/wireshark-ovs-netlink
@@ -34,4 +34,8 @@ ovs_meter, and ovs_ct_limit.
 %{_libdir}/wireshark/plugins/*/epan/ovs_netlink.so
 
 %changelog
-%autochangelog
+%{?autochangelog}
+%{!?autochangelog:
+* Wed Feb 25 2026 Timothy Redaelli <tredaelli@redhat.com> - 0.1.0-1
+- Initial package
+}
