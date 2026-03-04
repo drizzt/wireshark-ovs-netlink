@@ -158,7 +158,7 @@ jobs:
           cp ../*.deb packages/ 2>/dev/null || true
 
       - name: Upload packages
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: packages-${{ matrix.distro }}
           path: packages/
