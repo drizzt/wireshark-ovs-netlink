@@ -3,10 +3,6 @@
 
 build/
 build-scan/
-.claude/
-CLAUDE.md
-announcement.txt
-dump.txt
 *.so
 *.o
 *.d
