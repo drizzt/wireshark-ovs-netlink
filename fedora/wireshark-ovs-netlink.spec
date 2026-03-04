@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Red Hat Inc.
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 Name:           wireshark-ovs-netlink
 Version:        0.1.0
 Release:        %{?autorelease}%{!?autorelease:1%{?dist}}

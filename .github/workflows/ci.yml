@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Red Hat Inc.
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 name: CI
 
 on:
@@ -22,8 +25,8 @@ jobs:
       - name: Trust checkout directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Install flawfinder
-        run: pip install --break-system-packages flawfinder
+      - name: Install flawfinder and reuse
+        run: pip install --break-system-packages flawfinder reuse
 
       - name: scan-build
         run: scan-build cmake -B build-scan && scan-build --status-bugs cmake --build build-scan
@@ -33,6 +36,9 @@ jobs:
 
       - name: flawfinder
         run: flawfinder --minlevel=1 --error-level=3 --columns src/
+
+      - name: reuse lint
+        run: reuse lint
 
   sanitizers:
     runs-on: ubuntu-latest

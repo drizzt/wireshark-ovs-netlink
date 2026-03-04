@@ -1,4 +1,8 @@
+# SPDX-FileCopyrightText: 2025 Red Hat Inc.
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 build/
+build-scan/
 *.so
 *.o
 *.d
