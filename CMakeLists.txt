@@ -3,6 +3,7 @@
 # Open vSwitch Netlink Dissector Plugin for Wireshark
 # Out-of-tree plugin build
 #
+# SPDX-FileCopyrightText: 2025 Red Hat Inc.
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
 

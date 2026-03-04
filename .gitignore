@@ -1,4 +1,12 @@
+# SPDX-FileCopyrightText: 2025 Red Hat Inc.
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 build/
+build-scan/
+.claude/
+CLAUDE.md
+announcement.txt
+dump.txt
 *.so
 *.o
 *.d

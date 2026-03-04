@@ -4,6 +4,7 @@
  * Provides shims so the plugin builds against Wireshark 4.2+
  * through the current release without ifdefs in the main sources.
  *
+ * SPDX-FileCopyrightText: 2025 Red Hat Inc.
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
