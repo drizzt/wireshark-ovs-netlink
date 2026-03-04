@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: 2025 Red Hat Inc.
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+name: Coverity Scan
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: '0 0 * * 0'  # weekly on Sunday at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  coverity:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get install -y libwireshark-dev wireshark-dev cmake gcc
+
+      - uses: actions/checkout@v6
+
+      - name: Configure using CMake
+        run: cmake .
+
+      - uses: vapier/coverity-scan-action@v1
+        with:
+          email: timothy.redaelli@gmail.com
+          token: ${{ secrets.COVERITY_SCAN_TOKEN }}
